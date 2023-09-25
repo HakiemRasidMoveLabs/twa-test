@@ -66,6 +66,18 @@
         #viewport-params-expand {
             top: 30px;
         }
+        #newPage {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 90vh; /* Set the height to 90% of the viewport height */
+            background-color: white; /* Set the background color to white or any color you prefer */
+            z-index: 2; /* Ensure the new page appears above the main page */
+        }
+        #mainPage {
+            z-index: 1; /* Ensure the main page is beneath the new page */
+        }
+
     </style>
 </head>
 
@@ -105,8 +117,10 @@
 
     <!-- Added New Page Div -->
     <div id="newPage" class="page">
-        <!-- New Page Content Here -->
-        <button onclick="closePage();">Close Page</button>
+        <div align="center">
+            <a href="https://ton.org/"><img width="48" src="./assets/tapps.png" alt="logo of telegram web apps"></a>
+        </div>
+        <h1>Next Page</h1>
     </div>
 
     <div id="viewport"></div>
@@ -180,16 +194,29 @@
         function openPage(pageId) {
             mainPage.classList.remove('active');
             newPage.classList.add('active');
-            // If the Telegram API provides a way, modify the back button behavior
-            Telegram.WebApp.onEvent('backButtonPressed', closePage);
+        
+            // Show the back button and set its click handler
+            Telegram.WebApp.BackButton.show();
+            Telegram.WebApp.BackButton.onClick(closePage);
+            // Show temporary notification button
+            Telegram.WebApp.MainButton.setParams({
+                text: 'New Page Opened'
+            });
+            Telegram.WebApp.MainButton.show();
+            setTimeout(() => Telegram.WebApp.MainButton.hide(), 1000);
+            document.body.style.overflow = 'hidden';
         }
-
+        
         function closePage() {
             newPage.classList.remove('active');
             mainPage.classList.add('active');
-            // Reset the back button behavior to its default
-            Telegram.WebApp.offEvent('backButtonPressed', closePage);
+        
+            // Hide the back button and remove its click handler
+            Telegram.WebApp.BackButton.hide();
+            Telegram.WebApp.BackButton.offClick(closePage);
+            document.body.style.overflow = '';
         }
+
     </script>
 
     <!-- Eruda is console for mobile browsers -->
