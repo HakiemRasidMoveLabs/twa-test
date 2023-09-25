@@ -15,7 +15,15 @@
             padding: 0;
             color-scheme: var(--tg-color-scheme);
         }
+        /* Additional styles for page handling */
+        .page {
+            display: none;
+        }
 
+        .page.active {
+            display: block;
+        }
+        /* Existing styles continue */
         a {
             color: var(--tg-theme-link-color);
         }
@@ -40,7 +48,6 @@
             border-style: solid;
             border-image: linear-gradient(45deg, rgba(64, 224, 208, .5), rgba(173, 255, 47, .5)) 1;
         }
-
         #viewport-params-size,
         #viewport-params-expand {
             content: attr(text);
@@ -63,7 +70,8 @@
 </head>
 
 <body>
-    <main>
+    <main id="mainPage" class="page active">
+        <!-- Your Existing Main Page Content Here -->
         <div align="center">
             <a href="https://ton.org/"><img width="48" src="./assets/tapps.png" alt="logo of telegram web apps"></a>
         </div>
@@ -89,7 +97,18 @@
         <button onclick="toggleMainButton();">Toggle Main Button</button>
         <br></br>
         <textarea rows="4" cols="20">Enter text here...</textarea>
+
+        <!-- Added New Button to Open New Page -->
+        <h1>New Feature</h1>
+        <button onclick="openPage('newPage');">Open New Page</button>
     </main>
+
+    <!-- Added New Page Div -->
+    <div id="newPage" class="page">
+        <!-- New Page Content Here -->
+        <button onclick="closePage();">Close Page</button>
+    </div>
+
     <div id="viewport"></div>
     <div id="viewport-params-size"></div>
     <div id="viewport-params-expand"></div>
@@ -155,6 +174,22 @@
             document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor);
         });
 
+        const mainPage = document.getElementById('mainPage');
+        const newPage = document.getElementById('newPage');
+
+        function openPage(pageId) {
+            mainPage.classList.remove('active');
+            newPage.classList.add('active');
+            // If the Telegram API provides a way, modify the back button behavior
+            Telegram.WebApp.onEvent('backButtonPressed', closePage);
+        }
+
+        function closePage() {
+            newPage.classList.remove('active');
+            mainPage.classList.add('active');
+            // Reset the back button behavior to its default
+            Telegram.WebApp.offEvent('backButtonPressed', closePage);
+        }
     </script>
 
     <!-- Eruda is console for mobile browsers -->
@@ -162,3 +197,4 @@
     <script>eruda.init();</script>
 </body>
 </html>
+
